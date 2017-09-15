@@ -10,10 +10,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-/**
- * @see reactor.core.publisher.Flux#collect(Collector)
- * @see reactor.core.publisher.Flux#collect(Supplier, BiConsumer)
- */
 public class FluxCollect {
 
     public static void main(String[] args) {
@@ -24,6 +20,9 @@ public class FluxCollect {
         collectSupplier();
     }
 
+    /**
+     * @see Flux#collect(Collector)
+     */
     private static void collectTypeOne() {
         Flux.range(1, 10)
                 .collect(Collector.of(ArrayList::new, (ArrayList<Integer> array, Integer i) -> array.add(i + 10), /* never used */(left, right) -> left) /*  miss argument Nullable */)
@@ -33,9 +32,12 @@ public class FluxCollect {
         // [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     }
 
+    /**
+     * @see Flux#collect(Collector)
+     */
     private static void collectTypeTwo() {
         Flux.range(1, 10)
-                .collect(Collector.of(ArrayList<Integer>::new,
+                .collect(Collector.of(ArrayList::new,
                         (ArrayList<Integer> array, Integer i) -> array.add(i + 5),
                         (left, right) -> left/* never used */,
                         (ArrayList<Integer> source) -> source.subList(0, 5)/* miss argument Nullable */))
@@ -45,12 +47,15 @@ public class FluxCollect {
         // [6, 7, 8, 9, 10]
     }
 
+    /**
+     * @see reactor.core.publisher.Flux#collect(Supplier, BiConsumer)
+     */
     private static void collectSupplier() {
         Flux.range(1, 5)
                 .collect(ArrayList::new, ArrayList::add)
                 .subscribe(System.out::println);
 
         // obtain result:
-        // Flux.range(1, 5)
+        // [1, 2, 3, 4, 5]
     }
 }
