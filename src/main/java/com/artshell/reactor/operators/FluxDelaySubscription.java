@@ -12,9 +12,14 @@ public class FluxDelaySubscription {
      */
     private static void delaySubscriptionDuration() {
         Flux.just(5)
-                .delaySubscription(Duration.ofSeconds(1), Schedulers.newElastic("FluxDelaySubscription"))
-                .doOnSubscribe(s -> System.out.println("doOnSubscribe"))
+                .delaySubscription(Duration.ofMillis(500), Schedulers.parallel())
                 .subscribe(System.out::println, Throwable::printStackTrace);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // obtain result after 1 seconds
         // 5
