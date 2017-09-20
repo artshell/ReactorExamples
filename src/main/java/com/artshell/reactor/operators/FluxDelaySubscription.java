@@ -1,6 +1,7 @@
 package com.artshell.reactor.operators;
 
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
@@ -8,7 +9,8 @@ import java.time.Duration;
 public class FluxDelaySubscription {
 
     /**
-     * @see reactor.core.publisher.Flux#delaySubscription(Duration)
+     * @see Flux#delaySubscription(Duration)
+     * @see Flux#delaySubscription(Duration, Scheduler)
      */
     private static void delaySubscriptionDuration() {
         Flux.just(5)
@@ -21,11 +23,24 @@ public class FluxDelaySubscription {
             e.printStackTrace();
         }
 
-        // obtain result after 1 seconds
+        // obtain result after 1 seconds:
         // 5
     }
 
+    private static void delaySubscriptionPublisher() {
+        Flux.range(1, 4)
+                .delaySubscription(Flux.just(6).delayElements(Duration.ofMillis(300), Schedulers.newElastic("delay-publisher")))
+                .subscribe(System.out::println);
+
+        // obtain result after 300 mill:
+        // 1
+        // 2
+        // 3
+        // 4
+    }
+
     public static void main(String[] args) {
-        delaySubscriptionDuration();
+//        delaySubscriptionDuration();
+        delaySubscriptionPublisher();
     }
 }
