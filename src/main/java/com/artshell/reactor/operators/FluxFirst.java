@@ -8,6 +8,7 @@ import java.time.Duration;
 
 /**
  * @see reactor.core.publisher.Flux#first(Publisher[])
+ * @see Flux#first(Iterable)
  */
 public class FluxFirst {
     // first Publisher

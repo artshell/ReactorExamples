@@ -1,25 +1,20 @@
 package com.artshell.reactor.operators;
 
-
 import reactor.core.publisher.Flux;
 
 import java.util.function.Function;
 
 /**
- * @see reactor.core.publisher.Flux#compose(Function)
+ * @see reactor.core.publisher.Flux#flatMapSequential(Function)
  */
-public class FluxCompose {
-
+public class FluxFlatMapSequential {
     public static void main(String[] args) {
-        Flux.range(1, 5)
-                .compose(f -> f.map(i -> "[" + i + "]"))
+        Flux.range(1, 3)
+                .flatMapSequential(i -> Flux.just(i + "#"))
                 .subscribe(System.out::println);
-
         // obtain result:
-        // [1]
-        // [2]
-        // [3]
-        // [4]
-        // [5]
+        // 1#
+        // 2#
+        // 3#
     }
 }
