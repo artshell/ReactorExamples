@@ -11,5 +11,8 @@ public class FluxLimitRate {
         Flux.range(1, 100)
                 .limitRate(5)
                 .subscribe(System.out::println);
+
+        // obtain result:
+        // 1, 2, 3, 4, 5, ...
     }
 }
