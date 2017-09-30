@@ -4,7 +4,10 @@ import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.util.function.Consumer;
 
 public class FluxPublish {
@@ -48,6 +51,7 @@ public class FluxPublish {
         // second subscriber
         flux.subscribe(new CoreSubscriber<Integer>() {
             Subscription s;
+
             @Override
             public void onSubscribe(Subscription s) {
                 this.s = s;
@@ -113,7 +117,94 @@ public class FluxPublish {
         // three = 5
     }
 
+    /**
+     * @see ConnectableFlux#refCount()
+     * @see ConnectableFlux#refCount(int)
+     */
+    private static void refCount() {
+        Flux<String> flux = Flux.just("A", "B", "C").publish().refCount(2);
+
+        // waiting when first publisher subscribed
+        flux.subscribe(System.out::println);
+
+        // begin emmit element when second publisher subscribed
+        flux.subscribe(System.out::println);
+
+        // obtain result:
+        // A, A, B, B, C, C
+    }
+
+    /**
+     * @see ConnectableFlux#refCount(int, Duration)
+     * @see ConnectableFlux#refCount(int, Duration, Scheduler)
+     */
+    private static void refCountGrace() {
+        Flux<Integer> flux = Flux.range(1, 3).publish().refCount(1, Duration.ofMillis(50), Schedulers.newSingle("FluxPublish"));
+
+        // first Subscriber
+        flux.subscribe(new CoreSubscriber<Integer>() {
+            Subscription s;
+
+            @Override
+            public void onSubscribe(Subscription s) {
+                this.s = s;
+                s.request(Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onNext(Integer n) {
+                System.out.println("First Subscriber => " + n);
+                s.cancel();
+                testGrace(flux);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
+        // obtain result:
+        // First Subscriber => 1
+    }
+
+    private static void testGrace(Flux<Integer> flux) {
+        // Second Subscriber
+        flux.subscribe(new CoreSubscriber<Integer>() {
+            @Override
+            public void onSubscribe(Subscription s) {
+                s.request(Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onNext(Integer n) {
+                System.out.println("Second Subscriber => " + n);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
+        // obtain result:
+        // Second Subscriber => 2
+        // Second Subscriber => 3
+    }
+
     public static void main(String[] args) {
-        autoConnect();
+//        autoConnect();
+//        refCount();
+        refCountGrace();
     }
 }
