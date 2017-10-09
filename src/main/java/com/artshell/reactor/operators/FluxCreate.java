@@ -6,8 +6,11 @@ import reactor.core.publisher.FluxSink;
 import java.util.function.Consumer;
 
 /**
- * @see reactor.core.publisher.Flux#create(Consumer)
- * @see reactor.core.publisher.Flux#create(Consumer, FluxSink.OverflowStrategy)
+ * @see Flux#create(Consumer)
+ * @see Flux#create(Consumer, FluxSink.OverflowStrategy)
+ *
+ * @see Flux#push(Consumer)
+ * @see Flux#push(Consumer, FluxSink.OverflowStrategy)
  */
 public class FluxCreate {
 
