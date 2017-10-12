@@ -118,6 +118,7 @@ public class FluxPublish {
     }
 
     /**
+     * @see Flux#share()
      * @see ConnectableFlux#refCount()
      * @see ConnectableFlux#refCount(int)
      */
