@@ -57,6 +57,12 @@ public class FluxSkip {
                 .subscribe(System.out::println);
         // obtain result:
         // 6, 7, 8, 9, 10
+
+        Flux.range(1, 5)
+                .skipUntil(i -> i != 3)
+                .subscribe(System.out::println);
+        // obtain result:
+        // 1, 2, 3, 4, 5
     }
 
     /**
@@ -90,9 +96,9 @@ public class FluxSkip {
 //        skipDur();
 //        skipCount();
 //        skipLast();
-//        skipUntil();
+        skipUntil();
 //        skipOther();
-        skipWhile();
+//        skipWhile();
     }
 
 }
