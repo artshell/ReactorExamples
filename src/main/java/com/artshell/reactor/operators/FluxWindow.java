@@ -52,7 +52,7 @@ public class FluxWindow {
      * @see reactor.core.publisher.Flux#window(Duration, Duration)
      * @see reactor.core.publisher.Flux#window(Duration, Duration, Scheduler)
      */
-    private static void windowDuration2() {
+    private static void windowIgnore() {
         Flux.concat(Flux.just("#").delayElements(Duration.ofMillis(10)), Flux.just("&").delayElements(Duration.ofMillis(7)), Flux.just("%").delayElements(Duration.ofMillis(12)), Flux.just("@").delayElements(Duration.ofMillis(9)))
                 .window(Duration.ofMillis(5), Duration.ofMillis(8))
                 .subscribe(flx -> flx.subscribe(System.out::println));
@@ -98,21 +98,277 @@ public class FluxWindow {
     }
 
     /**
+     * @see reactor.core.publisher.Flux#window(Duration, Duration)
+     * @see reactor.core.publisher.Flux#window(Duration, Duration, Scheduler)
+     */
+    private static void windowOverlap() {
+        Flux.concat(Flux.just("#").delayElements(Duration.ofMillis(10)), Flux.just("&").delayElements(Duration.ofMillis(7)), Flux.just("%").delayElements(Duration.ofMillis(12)), Flux.just("@").delayElements(Duration.ofMillis(9)))
+                .window(Duration.ofMillis(10), Duration.ofMillis(5))
+                .subscribe(flx -> flx.subscribe(System.out::println));
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // obtain result:
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-3) onNextDropped: #
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // &
+        // &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-4) onNextDropped: &
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-3) onNextDropped: %
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+        // [DEBUG] (parallel-4) onNextDropped: @
+    }
+
+    /**
+     * @see reactor.core.publisher.Flux#window(Duration, Duration)
+     * @see reactor.core.publisher.Flux#window(Duration, Duration, Scheduler)
+     */
+    private static void windowExact() {
+        Flux.concat(Flux.just("#").delayElements(Duration.ofMillis(10)), Flux.just("&").delayElements(Duration.ofMillis(7)), Flux.just("%").delayElements(Duration.ofMillis(12)), Flux.just("@").delayElements(Duration.ofMillis(9)))
+                .window(Duration.ofMillis(5), Duration.ofMillis(5))
+                .subscribe(flx -> flx.subscribe(System.out::println));
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // obtain result:
+        // #, &, %, @
+    }
+
+    /**
      * @see reactor.core.publisher.Flux#window(int)
      */
     private static void windowMax() {
+        Flux.range(1, 5)
+                .window(3)
+                .subscribe(flx -> flx.subscribe(System.out::println));
 
+        // obtain result:
+        // 1, 2, 3, 4, 5
+    }
+
+
+    /**
+     * @see reactor.core.publisher.Flux#window(int, int)
+     */
+    private static void windowSkipIgnore() {
+        Flux.range(1, 10)
+                .window(2, 3)
+                .subscribe(flx -> flx.subscribe(System.out::println));
+        // obtain result:
+        // 1, 2, 4, 5, 7, 8, 10
     }
 
     /**
      * @see reactor.core.publisher.Flux#window(int, int)
      */
-    private static void windowSkip() {
+    private static void windowSkipOverlap() {
+        Flux.range(1, 10)
+                .window(5, 4)
+                .subscribe(flx -> flx.subscribe(System.out::println));
+        // obtain result:
+        // 1, 2, 3, 4, 5, 5, 6, 7, 8, 9, 9, 10
+    }
 
+    /**
+     * @see reactor.core.publisher.Flux#window(int, int)
+     */
+    private static void windowSkipExact() {
+        Flux.range(1, 10)
+                .window(3, 3)
+                .subscribe(flx -> flx.subscribe(System.out::println));
+        // obtain result:
+        // 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     }
 
     public static void main(String[] args) {
 //        windowDuration();
-        windowDuration2();
+//        windowIgnore();
+//        windowOverlap();
+//        windowExact();
+//        windowMax();
+//        windowSkipIgnore();
+//        windowSkipOverlap();
+        windowSkipExact();
     }
 }
