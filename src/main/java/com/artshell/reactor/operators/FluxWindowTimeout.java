@@ -21,9 +21,14 @@ public class FluxWindowTimeout {
                 .flatMap(flx -> flx)
                 .subscribe(System.out::println);
 
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // obtain result：
-        // [ERROR] (parallel-1) Scheduler worker in group main failed with an uncaught exception - reactor.core.Exceptions$ErrorCallbackNotImplemented: java.lang.IllegalStateException: UnicastProcessor allows only a single Subscriber
-        // reactor.core.Exceptions$ErrorCallbackNotImplemented: java.lang.IllegalStateException: UnicastProcessor allows only a single Subscriber
-        // Caused by: java.lang.IllegalStateException: UnicastProcessor allows only a single Subscriber
+        // # 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+
     }
 }
